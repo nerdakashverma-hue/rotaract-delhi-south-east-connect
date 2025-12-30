@@ -14,7 +14,117 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      contact_submissions: {
+        Row: {
+          created_at: string
+          email: string
+          form_type: string
+          id: string
+          message: string
+          name: string
+          organization_or_event_type: string
+          phone: string | null
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          form_type: string
+          id?: string
+          message: string
+          name: string
+          organization_or_event_type: string
+          phone?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          form_type?: string
+          id?: string
+          message?: string
+          name?: string
+          organization_or_event_type?: string
+          phone?: string | null
+        }
+        Relationships: []
+      }
+      gallery_photos: {
+        Row: {
+          category: string | null
+          created_at: string
+          description: string | null
+          event_name: string | null
+          id: string
+          image_url: string
+          title: string
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string
+          description?: string | null
+          event_name?: string | null
+          id?: string
+          image_url: string
+          title: string
+        }
+        Update: {
+          category?: string | null
+          created_at?: string
+          description?: string | null
+          event_name?: string | null
+          id?: string
+          image_url?: string
+          title?: string
+        }
+        Relationships: []
+      }
+      membership_applications: {
+        Row: {
+          address: string | null
+          availability: string | null
+          created_at: string
+          date_of_birth: string | null
+          email: string
+          full_name: string
+          id: string
+          occupation: string | null
+          organization: string | null
+          phone: string
+          referral_source: string | null
+          skills: string | null
+          why_join: string | null
+        }
+        Insert: {
+          address?: string | null
+          availability?: string | null
+          created_at?: string
+          date_of_birth?: string | null
+          email: string
+          full_name: string
+          id?: string
+          occupation?: string | null
+          organization?: string | null
+          phone: string
+          referral_source?: string | null
+          skills?: string | null
+          why_join?: string | null
+        }
+        Update: {
+          address?: string | null
+          availability?: string | null
+          created_at?: string
+          date_of_birth?: string | null
+          email?: string
+          full_name?: string
+          id?: string
+          occupation?: string | null
+          organization?: string | null
+          phone?: string
+          referral_source?: string | null
+          skills?: string | null
+          why_join?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

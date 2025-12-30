@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 type FormType = "sponsorship" | "event";
 
@@ -17,16 +18,36 @@ export function ContactSection() {
     e.preventDefault();
     setIsSubmitting(true);
     
-    // Simulate submission
-    await new Promise(resolve => setTimeout(resolve, 1500));
+    const formData = new FormData(e.currentTarget);
     
-    toast({
-      title: "Message Sent! 🎉",
-      description: "We'll get back to you within 24-48 hours.",
-    });
-    
-    setIsSubmitting(false);
-    (e.target as HTMLFormElement).reset();
+    try {
+      const { error } = await supabase.from("contact_submissions").insert({
+        name: formData.get("name") as string,
+        email: formData.get("email") as string,
+        phone: formData.get("phone") as string || null,
+        organization_or_event_type: formData.get("organization_or_event_type") as string,
+        message: formData.get("message") as string,
+        form_type: activeForm,
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "Message Sent! 🎉",
+        description: "We'll get back to you within 24-48 hours.",
+      });
+      
+      (e.target as HTMLFormElement).reset();
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      toast({
+        title: "Oops! Something went wrong",
+        description: "Please try again or contact us directly.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -144,6 +165,7 @@ export function ContactSection() {
                   <div>
                     <label className="text-sm font-medium mb-2 block">Your Name *</label>
                     <Input 
+                      name="name"
                       placeholder="John Doe" 
                       required 
                       className="h-12 rounded-xl"
@@ -152,6 +174,7 @@ export function ContactSection() {
                   <div>
                     <label className="text-sm font-medium mb-2 block">Email Address *</label>
                     <Input 
+                      name="email"
                       type="email" 
                       placeholder="john@example.com" 
                       required 
@@ -164,6 +187,7 @@ export function ContactSection() {
                   <div>
                     <label className="text-sm font-medium mb-2 block">Phone Number</label>
                     <Input 
+                      name="phone"
                       type="tel" 
                       placeholder="+91 98765 43210" 
                       className="h-12 rounded-xl"
@@ -174,6 +198,7 @@ export function ContactSection() {
                       {activeForm === "sponsorship" ? "Organization" : "Event Type"} *
                     </label>
                     <Input 
+                      name="organization_or_event_type"
                       placeholder={activeForm === "sponsorship" ? "Company Name" : "e.g., Blood Donation Camp"} 
                       required 
                       className="h-12 rounded-xl"
@@ -186,6 +211,7 @@ export function ContactSection() {
                     {activeForm === "sponsorship" ? "How would you like to support us?" : "Tell us about your event requirements"} *
                   </label>
                   <Textarea 
+                    name="message"
                     placeholder={activeForm === "sponsorship" 
                       ? "Describe your sponsorship interests, budget range, and what you hope to achieve..." 
                       : "Describe your event requirements, expected attendees, preferred date/location..."
