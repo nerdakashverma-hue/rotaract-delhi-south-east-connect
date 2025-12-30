@@ -1,21 +1,34 @@
 import { ArrowDown, Heart, Users, Globe } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import heroVideo from "@/assets/hero-video.mp4";
 
 export function HeroSection() {
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* Background Gradient */}
-      <div className="absolute inset-0 gradient-hero opacity-10" />
+      {/* Video Background */}
+      <div className="absolute inset-0 z-0">
+        <video
+          autoPlay
+          muted
+          loop
+          playsInline
+          className="w-full h-full object-cover"
+        >
+          <source src={heroVideo} type="video/mp4" />
+        </video>
+        {/* Overlay for readability */}
+        <div className="absolute inset-0 bg-gradient-to-b from-background/80 via-background/60 to-background/90" />
+      </div>
       
       {/* Floating Elements */}
-      <div className="absolute top-1/4 left-10 w-20 h-20 rounded-full bg-primary/20 blur-xl animate-float" />
-      <div className="absolute bottom-1/3 right-10 w-32 h-32 rounded-full bg-secondary/20 blur-xl animate-float animation-delay-200" />
-      <div className="absolute top-1/3 right-1/4 w-16 h-16 rounded-full bg-accent/20 blur-xl animate-float animation-delay-400" />
+      <div className="absolute top-1/4 left-10 w-20 h-20 rounded-full bg-primary/20 blur-xl animate-float z-10" />
+      <div className="absolute bottom-1/3 right-10 w-32 h-32 rounded-full bg-secondary/20 blur-xl animate-float animation-delay-200 z-10" />
+      <div className="absolute top-1/3 right-1/4 w-16 h-16 rounded-full bg-accent/20 blur-xl animate-float animation-delay-400 z-10" />
 
-      <div className="container mx-auto px-4 pt-20 relative z-10">
+      <div className="container mx-auto px-4 pt-20 relative z-20">
         <div className="max-w-4xl mx-auto text-center">
           {/* Badge */}
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 mb-8 animate-fade-in-up">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 mb-8 animate-fade-in-up backdrop-blur-sm">
             <Globe className="w-4 h-4 text-primary" />
             <span className="text-sm font-medium text-primary">Rotaract District 3011</span>
           </div>
@@ -33,13 +46,17 @@ export function HeroSection() {
 
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16 animate-fade-in-up animation-delay-300">
-            <Button variant="hero" size="xl">
-              <Heart className="w-5 h-5" />
-              Join Our Family
+            <Button variant="hero" size="xl" asChild>
+              <a href="#membership">
+                <Heart className="w-5 h-5" />
+                Join Our Family
+              </a>
             </Button>
-            <Button variant="hero-outline" size="xl">
-              <Users className="w-5 h-5" />
-              Explore Events
+            <Button variant="hero-outline" size="xl" asChild>
+              <a href="#events">
+                <Users className="w-5 h-5" />
+                Explore Events
+              </a>
             </Button>
           </div>
 

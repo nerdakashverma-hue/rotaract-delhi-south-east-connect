@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 const navLinks = [
   { name: "About", href: "#about" },
   { name: "Team", href: "#team" },
+  { name: "Gallery", href: "#gallery" },
   { name: "Events", href: "#events" },
   { name: "FAQs", href: "#faqs" },
   { name: "Contact", href: "#contact" },
@@ -57,8 +58,8 @@ export function Navbar() {
 
           {/* CTA Button */}
           <div className="hidden md:block">
-            <Button variant="hero" size="lg">
-              Join Us
+            <Button variant="hero" size="lg" asChild>
+              <a href="#membership">Join Us</a>
             </Button>
           </div>
 
@@ -89,8 +90,10 @@ export function Navbar() {
                   {link.name}
                 </a>
               ))}
-              <Button variant="hero" size="lg" className="mt-4">
-                Join Us
+              <Button variant="hero" size="lg" className="mt-4" asChild>
+                <a href="#membership" onClick={() => setIsMobileMenuOpen(false)}>
+                  Join Us
+                </a>
               </Button>
             </div>
           </div>
