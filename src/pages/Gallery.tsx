@@ -1,15 +1,17 @@
 import { Navbar } from "@/components/Navbar";
-import { HeroSection } from "@/components/HeroSection";
+import { GallerySection } from "@/components/GallerySection";
 import { Footer } from "@/components/Footer";
 
-const Index = () => {
+const Gallery = () => {
   return (
     <main className="min-h-screen">
       <Navbar />
-      <HeroSection />
+      <div className="pt-20">
+        <GallerySection />
+      </div>
       <Footer />
     </main>
   );
 };
 
-export default Index;
+export default Gallery;
