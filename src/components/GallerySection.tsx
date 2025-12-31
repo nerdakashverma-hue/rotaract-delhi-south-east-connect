@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import { X, ChevronLeft, ChevronRight, Camera } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
@@ -23,6 +24,9 @@ const categories = [
 ];
 
 export function GallerySection() {
+  const [searchParams] = useSearchParams();
+  const eventFilter = searchParams.get("event");
+  
   const [photos, setPhotos] = useState<GalleryPhoto[]>([]);
   const [activeCategory, setActiveCategory] = useState("all");
   const [selectedPhoto, setSelectedPhoto] = useState<GalleryPhoto | null>(null);
@@ -48,9 +52,11 @@ export function GallerySection() {
     }
   };
 
-  const filteredPhotos = activeCategory === "all"
-    ? photos
-    : photos.filter((p) => p.category === activeCategory);
+  const filteredPhotos = photos.filter((p) => {
+    const categoryMatch = activeCategory === "all" || p.category === activeCategory;
+    const eventMatch = !eventFilter || p.event_name?.toLowerCase().includes(eventFilter.toLowerCase().replace(/-/g, ' '));
+    return categoryMatch && eventMatch;
+  });
 
   const currentIndex = selectedPhoto 
     ? filteredPhotos.findIndex((p) => p.id === selectedPhoto.id) 
@@ -77,31 +83,36 @@ export function GallerySection() {
             <Camera className="w-4 h-4 inline mr-2" />
             Photo Gallery
           </span>
-          <h2 className="font-display text-3xl md:text-5xl font-bold mb-4">
+          <h1 className="font-display text-3xl md:text-5xl font-bold mb-4">
             Our <span className="gradient-text">Moments</span>
-          </h2>
+          </h1>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            Capturing the joy, impact, and memories we create together.
+            {eventFilter 
+              ? `Showing photos from: ${eventFilter.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}`
+              : "Capturing the joy, impact, and memories we create together."
+            }
           </p>
         </div>
 
         {/* Category Filter */}
-        <div className="flex flex-wrap items-center justify-center gap-3 mb-12">
-          {categories.map((cat) => (
-            <button
-              key={cat.key}
-              onClick={() => setActiveCategory(cat.key)}
-              className={cn(
-                "px-5 py-2.5 rounded-full font-medium transition-all text-sm",
-                activeCategory === cat.key
-                  ? "gradient-bg text-primary-foreground shadow-lg"
-                  : "bg-card hover:bg-muted border border-border"
-              )}
-            >
-              {cat.label}
-            </button>
-          ))}
-        </div>
+        {!eventFilter && (
+          <div className="flex flex-wrap items-center justify-center gap-3 mb-12">
+            {categories.map((cat) => (
+              <button
+                key={cat.key}
+                onClick={() => setActiveCategory(cat.key)}
+                className={cn(
+                  "px-5 py-2.5 rounded-full font-medium transition-all text-sm",
+                  activeCategory === cat.key
+                    ? "gradient-bg text-primary-foreground shadow-lg"
+                    : "bg-card hover:bg-muted border border-border"
+                )}
+              >
+                {cat.label}
+              </button>
+            ))}
+          </div>
+        )}
 
         {/* Photo Grid */}
         {loading ? (
@@ -142,6 +153,12 @@ export function GallerySection() {
                 </div>
               </div>
             ))}
+          </div>
+        )}
+
+        {filteredPhotos.length === 0 && !loading && (
+          <div className="text-center py-16">
+            <p className="text-muted-foreground text-lg">No photos found.</p>
           </div>
         )}
 
