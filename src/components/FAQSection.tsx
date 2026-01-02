@@ -15,7 +15,7 @@ const faqs = [
     answer: "Rotary is the OG—think experienced professionals and community leaders. Rotaract is the youth wing, full of energetic, passionate young adults who are just as committed to service, but with a fresh (and slightly chaotic) twist!"
   },
   {
-    question: "What does RAC DSE do?",
+    question: "What does RaC DSE do?",
     answer: "We host projects that matter—whether it's spreading awareness, organizing donation drives, educating children, protecting the environment, or just spreading joy. We also do fellowships, speaker sessions, games, treks, and the occasional \"let's-just-vibe\" meetups."
   },
   {
@@ -28,7 +28,7 @@ const faqs = [
   },
   {
     question: "Will I get opportunities for leadership or growth?",
-    answer: "100% yes. RAC DSE is a launchpad for leaders. You'll get hands-on experience, lead teams, manage projects, and even represent us on national and international platforms!"
+    answer: "100% yes. RaC DSE is a launchpad for leaders. You'll get hands-on experience, lead teams, manage projects, and even represent us on national and international platforms!"
   },
   {
     question: "How do I become a member?",
@@ -61,7 +61,7 @@ export function FAQSection() {
             Got <span className="gradient-text">Questions?</span>
           </h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            We've got answers! Here are some frequently asked questions about Rotaract and RAC DSE.
+            We've got answers! Here are some frequently asked questions about Rotaract and RaC DSE.
           </p>
         </div>
 

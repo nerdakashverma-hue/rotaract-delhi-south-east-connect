@@ -37,7 +37,7 @@ export function MembershipSection() {
       setIsSubmitted(true);
       toast({
         title: "Application Submitted! 🎉",
-        description: "Welcome to the RAC DSE family! We'll reach out soon.",
+        description: "Welcome to the RaC DSE family! We'll reach out soon.",
       });
     } catch (error) {
       console.error("Error submitting application:", error);
@@ -91,7 +91,7 @@ export function MembershipSection() {
             Become a <span className="gradient-text">Rotaractor</span>
           </h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            Ready to join our family of changemakers? Fill out the form below and start your journey with RAC DSE!
+            Ready to join our family of changemakers? Fill out the form below and start your journey with RaC DSE!
           </p>
         </div>
 
@@ -197,7 +197,7 @@ export function MembershipSection() {
               </div>
 
               <div>
-                <label className="text-sm font-medium mb-2 block">Why do you want to join RAC DSE?</label>
+                <label className="text-sm font-medium mb-2 block">Why do you want to join RaC DSE?</label>
                 <Textarea 
                   name="why_join"
                   placeholder="Tell us what excites you about Rotaract and what you hope to achieve..."

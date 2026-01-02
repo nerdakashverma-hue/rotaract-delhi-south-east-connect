@@ -16,7 +16,7 @@ export function Footer() {
                 <span className="text-primary-foreground font-bold text-xl">R</span>
               </div>
               <div>
-                <span className="font-display font-bold text-xl block">RAC Delhi South East</span>
+                <span className="font-display font-bold text-xl block">RaC Delhi South East</span>
                 <span className="text-sm text-background/60">Rotaract District 3011</span>
               </div>
             </div>
@@ -85,7 +85,7 @@ export function Footer() {
               © {new Date().getFullYear()} Rotaract Club of Delhi South East. All rights reserved.
             </p>
             <p className="text-background/60 text-sm flex items-center gap-1">
-              Made with <Heart className="w-4 h-4 text-primary fill-primary" /> by RAC DSE
+              Made with <Heart className="w-4 h-4 text-primary fill-primary" /> by RaC DSE
             </p>
           </div>
         </div>
