@@ -69,10 +69,10 @@ export function HeroSection() {
           {/* Stats */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8 animate-fade-in-up animation-delay-400">
             {[
-              { number: "450+", label: "Saplings Planted" },
-              { number: "50+", label: "Blood Units Collected" },
-              { number: "4000+", label: "Pads Donated" },
-              { number: "800+", label: "Lives Impacted" },
+              { number: "860+", label: "Saplings Planted" },
+              { number: "500+", label: "Blood Collected" },
+              { number: "1,20,000", label: "Pads Donated" },
+              { number: "15,000+", label: "Lives Impacted" },
             ].map((stat, index) => (
               <div
                 key={index}
