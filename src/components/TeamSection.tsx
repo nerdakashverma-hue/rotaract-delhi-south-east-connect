@@ -1,36 +1,36 @@
 import { Linkedin, Instagram, Mail } from "lucide-react";
 
 const teamMembers = [
-  {
-    name: "President",
-    role: "Club President",
-    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&h=300&fit=crop&crop=face",
-  },
-  {
-    name: "Vice President",
-    role: "Vice President",
-    image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=300&h=300&fit=crop&crop=face",
-  },
-  {
-    name: "Secretary",
-    role: "Club Secretary",
-    image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=300&h=300&fit=crop&crop=face",
-  },
-  {
-    name: "Treasurer",
-    role: "Club Treasurer",
-    image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=300&h=300&fit=crop&crop=face",
-  },
-  {
-    name: "Director - Service",
-    role: "Service Projects Lead",
-    image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=300&h=300&fit=crop&crop=face",
-  },
-  {
-    name: "Director - PR",
-    role: "Public Relations",
-    image: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=300&h=300&fit=crop&crop=face",
-  },
+  { name: "Rtr. Reet Sethi", role: "President" },
+  { name: "Rtr. Gunpreet Singh", role: "Vice President" },
+  { name: "Rtr. Aviral Sansi", role: "Secretary" },
+  { name: "Rtr. Rohit Saini", role: "Treasurer" },
+  { name: "Rtr. Aryan Sanjeev", role: "Joint Secretary" },
+  { name: "Rtr. Sarthak Bansal", role: "Chief Aide To President" },
+  { name: "IPP Rtr. Kartik Dawar", role: "Club Trainer" },
+  { name: "Rtn. Rtr. Rishika Khanna", role: "Club Advisor" },
+  { name: "Rtr. Prachi Oberoi", role: "Club Observer" },
+  { name: "Rtr. Sanya Taneja", role: "Public Relations Officer" },
+  { name: "Rtr. Pratyush Sinha", role: "Graphic Designer" },
+  { name: "Rtr. Akash Verma", role: "Graphics Designer" },
+  { name: "Rtr. Riddhi Gupta", role: "Club Supervisor" },
+  { name: "Rtr. Hunar Khanna", role: "Club Administrator" },
+  { name: "Rtr. Shweta Ghai", role: "Sergeant-At-Arms" },
+  { name: "Rtr. Khushi Sethi", role: "Directorial Committee Chair" },
+  { name: "Rtr. Ojassvi Sharma", role: "Community Services Director" },
+  { name: "Rtr. Bhavya Mittal", role: "Community Services Co-Director" },
+  { name: "Rtr. Shivansh Tiwari", role: "Vocational Services Director" },
+  { name: "Rtr. Divina Khattar", role: "Vocational Services Co-Director" },
+  { name: "Rtr. Kanav Bhatia", role: "Club Services Director" },
+  { name: "Rtr. Manasvi Mittal", role: "Club Services Co-Director" },
+  { name: "Rtr. Prashant Joshi", role: "International Services Director" },
+  { name: "Rtr. Harshita Agarwal", role: "International Services Co-Director" },
+  { name: "Rtr. Sanya Maini", role: "Video Editor" },
+  { name: "Rtr. Naman Rusia", role: "Outreach Head" },
+  { name: "Rtr. Uttpreksha Tyagi", role: "Creative Services Director" },
+  { name: "Rtr. Sahib Singh", role: "Creative Services Director" },
+  { name: "Rtr. Riya Yadav", role: "Club Editor" },
+  { name: "Rtr. Rishabh Jain", role: "Rotaract-Interact Relations" },
 ];
 
 export function TeamSection() {
@@ -57,14 +57,14 @@ export function TeamSection() {
               key={index}
               className="glass-card rounded-3xl p-6 text-center hover-lift group"
             >
-              {/* Avatar */}
-              <div className="relative w-32 h-32 mx-auto mb-6">
+              {/* Avatar with initials */}
+              <div className="relative w-20 h-20 mx-auto mb-4">
                 <div className="absolute inset-0 rounded-full gradient-bg opacity-20 blur-lg group-hover:opacity-40 transition-opacity" />
-                <img
-                  src={member.image}
-                  alt={member.name}
-                  className="w-full h-full rounded-full object-cover relative z-10 border-4 border-card"
-                />
+                <div className="w-full h-full rounded-full bg-primary/10 flex items-center justify-center relative z-10 border-2 border-primary/20">
+                  <span className="text-primary font-bold text-lg">
+                    {member.name.split(' ').filter(n => !n.includes('Rtr.') && !n.includes('Rtn.') && !n.includes('IPP')).map(n => n[0]).join('').slice(0, 2)}
+                  </span>
+                </div>
               </div>
 
               {/* Info */}
