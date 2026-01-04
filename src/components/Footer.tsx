@@ -11,14 +11,8 @@ export function Footer() {
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
           {/* Brand */}
           <div className="lg:col-span-2">
-            <div className="flex items-center gap-2 mb-4">
-              <div className="w-12 h-12 rounded-full gradient-bg flex items-center justify-center">
-                <span className="text-primary-foreground font-bold text-xl">R</span>
-              </div>
-              <div>
-                <span className="font-display font-bold text-xl block">RaC Delhi South East</span>
-                <span className="text-sm text-background/60">Rotaract District 3011</span>
-              </div>
+            <div className="flex items-center mb-4">
+              <img src="/logo.png" alt="RaC Delhi South East" className="h-14 w-auto brightness-0 invert" />
             </div>
             <p className="text-background/70 max-w-md mb-6">
               Where passion meets purpose, and youth meets action. Join our family of changemakers creating lasting impact through service, leadership, and friendship.

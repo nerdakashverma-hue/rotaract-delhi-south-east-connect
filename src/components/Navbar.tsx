@@ -35,13 +35,8 @@ export function Navbar() {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16 md:h-20">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2">
-            <div className="w-10 h-10 rounded-full gradient-bg flex items-center justify-center">
-              <span className="text-primary-foreground font-bold text-lg">R</span>
-            </div>
-            <span className="font-display font-bold text-lg hidden sm:block">
-              RAC <span className="gradient-text">DSE</span>
-            </span>
+          <Link to="/" className="flex items-center">
+            <img src="/logo.png" alt="RaC Delhi South East" className="h-10 md:h-12 w-auto" />
           </Link>
 
           {/* Desktop Navigation */}
