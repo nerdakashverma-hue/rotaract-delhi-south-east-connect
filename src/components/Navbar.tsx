@@ -36,8 +36,8 @@ export function Navbar() {
         <div className="flex items-center justify-between h-16 md:h-20">
           {/* Logo */}
           <Link to="/" className="flex items-center group">
-            <div className="bg-white/95 backdrop-blur-sm rounded-lg px-3 py-1.5 shadow-sm hover:shadow-md transition-all duration-300 group-hover:scale-[1.02]">
-              <img src="/logo.png" alt="RaC Delhi South East" className="h-8 md:h-10 w-auto" />
+            <div className="bg-white/95 backdrop-blur-sm rounded-md px-2 py-1 shadow-sm hover:shadow-md transition-all duration-300 group-hover:scale-[1.02]">
+              <img src="/logo.png" alt="RaC Delhi South East" className="h-10 md:h-14 w-auto" />
             </div>
           </Link>
 
