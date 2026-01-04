@@ -11,8 +11,10 @@ export function Footer() {
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
           {/* Brand */}
           <div className="lg:col-span-2">
-            <div className="flex items-center mb-4">
-              <img src="/logo.png" alt="RaC Delhi South East" className="h-14 w-auto brightness-0 invert" />
+            <div className="flex items-center mb-6">
+              <div className="bg-white rounded-xl px-4 py-2 shadow-lg">
+                <img src="/logo.png" alt="RaC Delhi South East" className="h-12 w-auto" />
+              </div>
             </div>
             <p className="text-background/70 max-w-md mb-6">
               Where passion meets purpose, and youth meets action. Join our family of changemakers creating lasting impact through service, leadership, and friendship.
