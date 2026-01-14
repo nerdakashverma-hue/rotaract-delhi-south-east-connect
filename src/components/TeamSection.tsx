@@ -1,39 +1,41 @@
 import { Linkedin, Instagram, Mail } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
-const teamMembers = [
-  { name: "Rtr. Reet Sethi", role: "President" },
-  { name: "Rtr. Gunpreet Singh", role: "Vice President" },
-  { name: "Rtr. Aviral Sansi", role: "Secretary" },
-  { name: "Rtr. Rohit Saini", role: "Treasurer" },
-  { name: "Rtr. Aryan Sanjeev", role: "Joint Secretary" },
-  { name: "Rtr. Sarthak Bansal", role: "Chief Aide To President" },
-  { name: "IPP Rtr. Kartik Dawar", role: "Club Trainer" },
-  { name: "Rtn. Rtr. Rishika Khanna", role: "Club Advisor" },
-  { name: "Rtr. Prachi Oberoi", role: "Club Observer" },
-  { name: "Rtr. Sanya Taneja", role: "Public Relations Officer" },
-  { name: "Rtr. Pratyush Sinha", role: "Graphic Designer" },
-  { name: "Rtr. Akash Verma", role: "Graphics Designer" },
-  { name: "Rtr. Riddhi Gupta", role: "Club Supervisor" },
-  { name: "Rtr. Hunar Khanna", role: "Club Administrator" },
-  { name: "Rtr. Shweta Ghai", role: "Sergeant-At-Arms" },
-  { name: "Rtr. Khushi Sethi", role: "Directorial Committee Chair" },
-  { name: "Rtr. Ojassvi Sharma", role: "Community Services Director" },
-  { name: "Rtr. Bhavya Mittal", role: "Community Services Co-Director" },
-  { name: "Rtr. Shivansh Tiwari", role: "Vocational Services Director" },
-  { name: "Rtr. Divina Khattar", role: "Vocational Services Co-Director" },
-  { name: "Rtr. Kanav Bhatia", role: "Club Services Director" },
-  { name: "Rtr. Manasvi Mittal", role: "Club Services Co-Director" },
-  { name: "Rtr. Prashant Joshi", role: "International Services Director" },
-  { name: "Rtr. Harshita Agarwal", role: "International Services Co-Director" },
-  { name: "Rtr. Sanya Maini", role: "Video Editor" },
-  { name: "Rtr. Naman Rusia", role: "Outreach Head" },
-  { name: "Rtr. Uttpreksha Tyagi", role: "Creative Services Director" },
-  { name: "Rtr. Sahib Singh", role: "Creative Services Director" },
-  { name: "Rtr. Riya Yadav", role: "Club Editor" },
-  { name: "Rtr. Rishabh Jain", role: "Rotaract-Interact Relations" },
-];
+interface TeamMember {
+  id: string;
+  name: string;
+  role: string;
+  photo_url: string | null;
+  linkedin_url: string | null;
+  instagram_url: string | null;
+  email: string | null;
+  display_order: number;
+}
 
 export function TeamSection() {
+  const { data: teamMembers = [], isLoading } = useQuery({
+    queryKey: ["team-members"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("team_members")
+        .select("*")
+        .order("display_order", { ascending: true });
+
+      if (error) throw error;
+      return data as TeamMember[];
+    },
+  });
+
+  const getInitials = (name: string) => {
+    return name
+      .split(" ")
+      .filter((n) => !n.includes("Rtr.") && !n.includes("Rtn.") && !n.includes("IPP"))
+      .map((n) => n[0])
+      .join("")
+      .slice(0, 2);
+  };
+
   return (
     <section id="team" className="py-20 md:py-32 relative">
       <div className="container mx-auto px-4">
@@ -50,51 +52,83 @@ export function TeamSection() {
           </p>
         </div>
 
-        {/* Team Grid */}
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
-          {teamMembers.map((member, index) => (
-            <div
-              key={index}
-              className="glass-card rounded-3xl p-6 text-center hover-lift group"
-            >
-              {/* Avatar with initials */}
-              <div className="relative w-20 h-20 mx-auto mb-4">
-                <div className="absolute inset-0 rounded-full gradient-bg opacity-20 blur-lg group-hover:opacity-40 transition-opacity" />
-                <div className="w-full h-full rounded-full bg-primary/10 flex items-center justify-center relative z-10 border-2 border-primary/20">
-                  <span className="text-primary font-bold text-lg">
-                    {member.name.split(' ').filter(n => !n.includes('Rtr.') && !n.includes('Rtn.') && !n.includes('IPP')).map(n => n[0]).join('').slice(0, 2)}
-                  </span>
+        {/* Loading State */}
+        {isLoading && (
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <div key={i} className="glass-card rounded-3xl p-6 text-center animate-pulse">
+                <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-muted" />
+                <div className="h-6 bg-muted rounded w-3/4 mx-auto mb-2" />
+                <div className="h-4 bg-muted rounded w-1/2 mx-auto mb-4" />
+                <div className="flex justify-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-muted" />
+                  <div className="w-10 h-10 rounded-full bg-muted" />
+                  <div className="w-10 h-10 rounded-full bg-muted" />
                 </div>
               </div>
+            ))}
+          </div>
+        )}
 
-              {/* Info */}
-              <h3 className="font-display text-xl font-bold mb-1">{member.name}</h3>
-              <p className="text-primary font-medium mb-4">{member.role}</p>
+        {/* Team Grid */}
+        {!isLoading && (
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            {teamMembers.map((member) => (
+              <div
+                key={member.id}
+                className="glass-card rounded-3xl p-6 text-center hover-lift group"
+              >
+                {/* Avatar */}
+                <div className="relative w-20 h-20 mx-auto mb-4">
+                  <div className="absolute inset-0 rounded-full gradient-bg opacity-20 blur-lg group-hover:opacity-40 transition-opacity" />
+                  {member.photo_url ? (
+                    <img
+                      src={member.photo_url}
+                      alt={member.name}
+                      className="w-full h-full rounded-full object-cover relative z-10 border-2 border-primary/20"
+                    />
+                  ) : (
+                    <div className="w-full h-full rounded-full bg-primary/10 flex items-center justify-center relative z-10 border-2 border-primary/20">
+                      <span className="text-primary font-bold text-lg">
+                        {getInitials(member.name)}
+                      </span>
+                    </div>
+                  )}
+                </div>
 
-              {/* Social Links */}
-              <div className="flex items-center justify-center gap-3">
-                <a
-                  href="#"
-                  className="w-10 h-10 rounded-full bg-muted flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-all"
-                >
-                  <Linkedin className="w-4 h-4" />
-                </a>
-                <a
-                  href="#"
-                  className="w-10 h-10 rounded-full bg-muted flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-all"
-                >
-                  <Instagram className="w-4 h-4" />
-                </a>
-                <a
-                  href="#"
-                  className="w-10 h-10 rounded-full bg-muted flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-all"
-                >
-                  <Mail className="w-4 h-4" />
-                </a>
+                {/* Info */}
+                <h3 className="font-display text-xl font-bold mb-1">{member.name}</h3>
+                <p className="text-primary font-medium mb-4">{member.role}</p>
+
+                {/* Social Links */}
+                <div className="flex items-center justify-center gap-3">
+                  <a
+                    href={member.linkedin_url || "#"}
+                    className="w-10 h-10 rounded-full bg-muted flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-all"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <Linkedin className="w-4 h-4" />
+                  </a>
+                  <a
+                    href={member.instagram_url || "#"}
+                    className="w-10 h-10 rounded-full bg-muted flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-all"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <Instagram className="w-4 h-4" />
+                  </a>
+                  <a
+                    href={member.email ? `mailto:${member.email}` : "#"}
+                    className="w-10 h-10 rounded-full bg-muted flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-all"
+                  >
+                    <Mail className="w-4 h-4" />
+                  </a>
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );
