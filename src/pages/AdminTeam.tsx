@@ -4,8 +4,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { Upload, LogOut, ArrowLeft, Loader2, Trash2 } from "lucide-react";
+import { Upload, LogOut, ArrowLeft, Loader2, Trash2, Linkedin, Instagram, Mail, Save } from "lucide-react";
 import { Link, Navigate } from "react-router-dom";
 
 interface TeamMember {
@@ -13,6 +14,9 @@ interface TeamMember {
   name: string;
   role: string;
   photo_url: string | null;
+  linkedin_url: string | null;
+  instagram_url: string | null;
+  email: string | null;
   display_order: number;
 }
 
@@ -20,6 +24,12 @@ export default function AdminTeam() {
   const { user, isAdmin, isLoading: authLoading, signOut } = useAuth();
   const queryClient = useQueryClient();
   const [uploadingId, setUploadingId] = useState<string | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [socialLinks, setSocialLinks] = useState<{
+    linkedin_url: string;
+    instagram_url: string;
+    email: string;
+  }>({ linkedin_url: "", instagram_url: "", email: "" });
 
   const { data: teamMembers = [], isLoading } = useQuery({
     queryKey: ["admin-team-members"],
@@ -54,27 +64,48 @@ export default function AdminTeam() {
     },
   });
 
+  const updateSocialsMutation = useMutation({
+    mutationFn: async ({ id, linkedin_url, instagram_url, email }: { 
+      id: string; 
+      linkedin_url: string | null;
+      instagram_url: string | null;
+      email: string | null;
+    }) => {
+      const { error } = await supabase
+        .from("team_members")
+        .update({ linkedin_url, instagram_url, email })
+        .eq("id", id);
+
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin-team-members"] });
+      queryClient.invalidateQueries({ queryKey: ["team-members"] });
+      toast.success("Social links updated successfully!");
+      setEditingId(null);
+    },
+    onError: (error) => {
+      toast.error("Failed to update social links: " + error.message);
+    },
+  });
+
   const handleFileUpload = async (memberId: string, file: File) => {
     setUploadingId(memberId);
 
     try {
-      // Generate a unique filename
       const fileExt = file.name.split(".").pop();
       const fileName = `${memberId}-${Date.now()}.${fileExt}`;
 
-      // Upload to Supabase Storage
       const { error: uploadError } = await supabase.storage
         .from("team-photos")
         .upload(fileName, file, { upsert: true });
 
       if (uploadError) throw uploadError;
 
-      // Get the public URL
       const { data: { publicUrl } } = supabase.storage
         .from("team-photos")
         .getPublicUrl(fileName);
 
-      // Update the team member's photo_url
       await updatePhotoMutation.mutateAsync({ id: memberId, photoUrl: publicUrl });
     } catch (error: any) {
       toast.error("Upload failed: " + error.message);
@@ -87,6 +118,24 @@ export default function AdminTeam() {
     await updatePhotoMutation.mutateAsync({ id: memberId, photoUrl: null });
   };
 
+  const handleEditSocials = (member: TeamMember) => {
+    setEditingId(member.id);
+    setSocialLinks({
+      linkedin_url: member.linkedin_url || "",
+      instagram_url: member.instagram_url || "",
+      email: member.email || "",
+    });
+  };
+
+  const handleSaveSocials = async (memberId: string) => {
+    await updateSocialsMutation.mutateAsync({
+      id: memberId,
+      linkedin_url: socialLinks.linkedin_url || null,
+      instagram_url: socialLinks.instagram_url || null,
+      email: socialLinks.email || null,
+    });
+  };
+
   const getInitials = (name: string) => {
     return name
       .split(" ")
@@ -96,7 +145,6 @@ export default function AdminTeam() {
       .slice(0, 2);
   };
 
-  // Show loading state
   if (authLoading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -105,7 +153,6 @@ export default function AdminTeam() {
     );
   }
 
-  // Redirect if not authenticated or not admin
   if (!user) {
     return <Navigate to="/admin/login" replace />;
   }
@@ -148,9 +195,9 @@ export default function AdminTeam() {
 
         {/* Title */}
         <div className="mb-8">
-          <h1 className="font-display text-3xl font-bold">Team Photo Manager</h1>
+          <h1 className="font-display text-3xl font-bold">Team Manager</h1>
           <p className="text-muted-foreground mt-2">
-            Upload and manage photos for each team member
+            Upload photos and manage social links for each team member
           </p>
         </div>
 
@@ -186,8 +233,30 @@ export default function AdminTeam() {
                   <p className="text-sm text-muted-foreground">{member.role}</p>
                 </div>
 
-                {/* Upload Controls */}
-                <div className="space-y-2">
+                {/* Current Socials Display */}
+                <div className="flex justify-center gap-2 mb-4">
+                  {member.linkedin_url && (
+                    <a href={member.linkedin_url} target="_blank" rel="noopener noreferrer" className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+                      <Linkedin className="w-4 h-4" />
+                    </a>
+                  )}
+                  {member.instagram_url && (
+                    <a href={member.instagram_url} target="_blank" rel="noopener noreferrer" className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+                      <Instagram className="w-4 h-4" />
+                    </a>
+                  )}
+                  {member.email && (
+                    <a href={`mailto:${member.email}`} className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+                      <Mail className="w-4 h-4" />
+                    </a>
+                  )}
+                  {!member.linkedin_url && !member.instagram_url && !member.email && (
+                    <span className="text-xs text-muted-foreground">No socials added</span>
+                  )}
+                </div>
+
+                {/* Photo Upload Controls */}
+                <div className="space-y-2 mb-4">
                   <label className="block">
                     <Input
                       type="file"
@@ -233,6 +302,78 @@ export default function AdminTeam() {
                     </Button>
                   )}
                 </div>
+
+                {/* Social Links Edit */}
+                {editingId === member.id ? (
+                  <div className="space-y-3 border-t border-border pt-4">
+                    <div className="space-y-1">
+                      <Label className="text-xs flex items-center gap-1">
+                        <Linkedin className="w-3 h-3" /> LinkedIn URL
+                      </Label>
+                      <Input
+                        placeholder="https://linkedin.com/in/..."
+                        value={socialLinks.linkedin_url}
+                        onChange={(e) => setSocialLinks(prev => ({ ...prev, linkedin_url: e.target.value }))}
+                        className="text-sm h-9"
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <Label className="text-xs flex items-center gap-1">
+                        <Instagram className="w-3 h-3" /> Instagram URL
+                      </Label>
+                      <Input
+                        placeholder="https://instagram.com/..."
+                        value={socialLinks.instagram_url}
+                        onChange={(e) => setSocialLinks(prev => ({ ...prev, instagram_url: e.target.value }))}
+                        className="text-sm h-9"
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <Label className="text-xs flex items-center gap-1">
+                        <Mail className="w-3 h-3" /> Email
+                      </Label>
+                      <Input
+                        type="email"
+                        placeholder="email@example.com"
+                        value={socialLinks.email}
+                        onChange={(e) => setSocialLinks(prev => ({ ...prev, email: e.target.value }))}
+                        className="text-sm h-9"
+                      />
+                    </div>
+                    <div className="flex gap-2">
+                      <Button
+                        size="sm"
+                        className="flex-1"
+                        onClick={() => handleSaveSocials(member.id)}
+                        disabled={updateSocialsMutation.isPending}
+                      >
+                        {updateSocialsMutation.isPending ? (
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                        ) : (
+                          <>
+                            <Save className="w-4 h-4 mr-1" />
+                            Save
+                          </>
+                        )}
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => setEditingId(null)}
+                      >
+                        Cancel
+                      </Button>
+                    </div>
+                  </div>
+                ) : (
+                  <Button
+                    variant="secondary"
+                    className="w-full"
+                    onClick={() => handleEditSocials(member)}
+                  >
+                    Edit Social Links
+                  </Button>
+                )}
               </div>
             ))}
           </div>

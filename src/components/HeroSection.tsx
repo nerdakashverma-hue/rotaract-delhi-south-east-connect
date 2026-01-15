@@ -1,24 +1,14 @@
 import { ArrowRight, Heart, Users, Globe, Sparkles } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import heroVideo from "@/assets/hero-video.mp4";
+import { StarryBackground } from "./StarryBackground";
 
 export function HeroSection() {
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* Video Background */}
-      <div className="absolute inset-0 z-0">
-        <video
-          autoPlay
-          muted
-          loop
-          playsInline
-          className="w-full h-full object-cover"
-        >
-          <source src={heroVideo} type="video/mp4" />
-        </video>
-        <div className="absolute inset-0 bg-gradient-to-b from-background/85 via-background/70 to-background" />
-      </div>
+      {/* Animated Starry Background */}
+      <StarryBackground />
+      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-background z-[1]" />
       
       {/* Animated Floating Elements */}
       <div className="absolute top-1/4 left-10 w-24 h-24 rounded-full bg-primary/15 blur-2xl animate-float z-10" />

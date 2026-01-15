@@ -100,31 +100,39 @@ export function TeamSection() {
                 <h3 className="font-display text-xl font-bold mb-1">{member.name}</h3>
                 <p className="text-primary font-medium mb-4">{member.role}</p>
 
-                {/* Social Links */}
-                <div className="flex items-center justify-center gap-3">
-                  <a
-                    href={member.linkedin_url || "#"}
-                    className="w-10 h-10 rounded-full bg-muted flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-all"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <Linkedin className="w-4 h-4" />
-                  </a>
-                  <a
-                    href={member.instagram_url || "#"}
-                    className="w-10 h-10 rounded-full bg-muted flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-all"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <Instagram className="w-4 h-4" />
-                  </a>
-                  <a
-                    href={member.email ? `mailto:${member.email}` : "#"}
-                    className="w-10 h-10 rounded-full bg-muted flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-all"
-                  >
-                    <Mail className="w-4 h-4" />
-                  </a>
-                </div>
+                {/* Social Links - Only show if at least one exists */}
+                {(member.linkedin_url || member.instagram_url || member.email) && (
+                  <div className="flex items-center justify-center gap-3">
+                    {member.linkedin_url && (
+                      <a
+                        href={member.linkedin_url}
+                        className="w-10 h-10 rounded-full bg-muted flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-all"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <Linkedin className="w-4 h-4" />
+                      </a>
+                    )}
+                    {member.instagram_url && (
+                      <a
+                        href={member.instagram_url}
+                        className="w-10 h-10 rounded-full bg-muted flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-all"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <Instagram className="w-4 h-4" />
+                      </a>
+                    )}
+                    {member.email && (
+                      <a
+                        href={`mailto:${member.email}`}
+                        className="w-10 h-10 rounded-full bg-muted flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-all"
+                      >
+                        <Mail className="w-4 h-4" />
+                      </a>
+                    )}
+                  </div>
+                )}
               </div>
             ))}
           </div>
