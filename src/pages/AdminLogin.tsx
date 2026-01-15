@@ -5,28 +5,40 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { LogIn, ArrowLeft } from "lucide-react";
+import { LogIn, ArrowLeft, UserPlus } from "lucide-react";
 import { Link } from "react-router-dom";
 
 export default function AdminLogin() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const { signIn } = useAuth();
+  const [isSignUp, setIsSignUp] = useState(false);
+  const { signIn, signUp } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
-    const { error } = await signIn(email, password);
-
-    if (error) {
-      toast.error(error.message);
-      setIsLoading(false);
+    if (isSignUp) {
+      const { error } = await signUp(email, password);
+      if (error) {
+        toast.error(error.message);
+        setIsLoading(false);
+      } else {
+        toast.success("Account created! You can now sign in. Note: An admin must grant you admin privileges.");
+        setIsSignUp(false);
+        setIsLoading(false);
+      }
     } else {
-      toast.success("Logged in successfully!");
-      navigate("/admin/team");
+      const { error } = await signIn(email, password);
+      if (error) {
+        toast.error(error.message);
+        setIsLoading(false);
+      } else {
+        toast.success("Logged in successfully!");
+        navigate("/admin/team");
+      }
     }
   };
 
@@ -44,10 +56,12 @@ export default function AdminLogin() {
         <div className="glass-card rounded-3xl p-8">
           <div className="text-center mb-8">
             <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-primary/10 flex items-center justify-center">
-              <LogIn className="w-8 h-8 text-primary" />
+              {isSignUp ? <UserPlus className="w-8 h-8 text-primary" /> : <LogIn className="w-8 h-8 text-primary" />}
             </div>
-            <h1 className="font-display text-2xl font-bold">Admin Login</h1>
-            <p className="text-muted-foreground mt-2">Sign in to manage team photos</p>
+            <h1 className="font-display text-2xl font-bold">{isSignUp ? "Create Account" : "Admin Login"}</h1>
+            <p className="text-muted-foreground mt-2">
+              {isSignUp ? "Sign up for a new account" : "Sign in to manage team photos"}
+            </p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -72,13 +86,24 @@ export default function AdminLogin() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
+                minLength={6}
               />
             </div>
 
             <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? "Signing in..." : "Sign In"}
+              {isLoading ? (isSignUp ? "Creating account..." : "Signing in...") : (isSignUp ? "Create Account" : "Sign In")}
             </Button>
           </form>
+
+          <div className="mt-6 text-center">
+            <button
+              type="button"
+              onClick={() => setIsSignUp(!isSignUp)}
+              className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+            >
+              {isSignUp ? "Already have an account? Sign in" : "Need an account? Sign up"}
+            </button>
+          </div>
         </div>
       </div>
     </div>
