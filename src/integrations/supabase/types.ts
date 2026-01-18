@@ -47,6 +47,48 @@ export type Database = {
         }
         Relationships: []
       }
+      events: {
+        Row: {
+          attendees: number | null
+          created_at: string
+          date: string
+          description: string | null
+          display_order: number
+          id: string
+          image_url: string | null
+          location: string | null
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          attendees?: number | null
+          created_at?: string
+          date: string
+          description?: string | null
+          display_order?: number
+          id?: string
+          image_url?: string | null
+          location?: string | null
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          attendees?: number | null
+          created_at?: string
+          date?: string
+          description?: string | null
+          display_order?: number
+          id?: string
+          image_url?: string | null
+          location?: string | null
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       gallery_photos: {
         Row: {
           category: string | null
