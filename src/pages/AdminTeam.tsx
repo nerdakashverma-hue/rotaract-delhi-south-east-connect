@@ -193,12 +193,19 @@ export default function AdminTeam() {
           </Button>
         </div>
 
-        {/* Title */}
-        <div className="mb-8">
-          <h1 className="font-display text-3xl font-bold">Team Manager</h1>
-          <p className="text-muted-foreground mt-2">
-            Upload photos and manage social links for each team member
-          </p>
+        {/* Title & Nav */}
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <h1 className="font-display text-3xl font-bold">Team Manager</h1>
+            <p className="text-muted-foreground mt-2">
+              Upload photos and manage social links for each team member
+            </p>
+          </div>
+          <Link to="/admin/events">
+            <Button variant="secondary">
+              Manage Events
+            </Button>
+          </Link>
         </div>
 
         {/* Team Grid */}
