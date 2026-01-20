@@ -50,10 +50,12 @@ export type Database = {
       events: {
         Row: {
           attendees: number | null
+          category: string | null
           created_at: string
           date: string
           description: string | null
           display_order: number
+          gallery_slug: string | null
           id: string
           image_url: string | null
           location: string | null
@@ -63,10 +65,12 @@ export type Database = {
         }
         Insert: {
           attendees?: number | null
+          category?: string | null
           created_at?: string
           date: string
           description?: string | null
           display_order?: number
+          gallery_slug?: string | null
           id?: string
           image_url?: string | null
           location?: string | null
@@ -76,10 +80,12 @@ export type Database = {
         }
         Update: {
           attendees?: number | null
+          category?: string | null
           created_at?: string
           date?: string
           description?: string | null
           display_order?: number
+          gallery_slug?: string | null
           id?: string
           image_url?: string | null
           location?: string | null
