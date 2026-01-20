@@ -27,10 +27,17 @@ import {
   MapPin,
   Users,
   Edit2,
+  Crown,
+  Globe,
+  Heart,
+  Briefcase,
+  Handshake,
 } from "lucide-react";
 import { Link, Navigate } from "react-router-dom";
+import { cn } from "@/lib/utils";
 
 type EventStatus = "ongoing" | "upcoming" | "past";
+type EventCategory = "flagship" | "international" | "community" | "vocational" | "club";
 
 interface Event {
   id: string;
@@ -40,7 +47,9 @@ interface Event {
   location: string | null;
   attendees: number;
   status: EventStatus;
+  category: EventCategory | null;
   image_url: string | null;
+  gallery_slug: string | null;
   display_order: number;
 }
 
@@ -51,6 +60,8 @@ interface EventForm {
   location: string;
   attendees: string;
   status: EventStatus;
+  category: EventCategory;
+  gallery_slug: string;
 }
 
 const emptyForm: EventForm = {
@@ -60,6 +71,16 @@ const emptyForm: EventForm = {
   location: "",
   attendees: "0",
   status: "upcoming",
+  category: "community",
+  gallery_slug: "",
+};
+
+const categoryConfig: Record<EventCategory, { label: string; icon: typeof Crown; color: string }> = {
+  flagship: { label: "Flagship", icon: Crown, color: "text-primary" },
+  international: { label: "International", icon: Globe, color: "text-blue-600" },
+  community: { label: "Community", icon: Heart, color: "text-rose-600" },
+  vocational: { label: "Vocational", icon: Briefcase, color: "text-amber-600" },
+  club: { label: "Club Service", icon: Handshake, color: "text-emerald-600" },
 };
 
 export default function AdminEvents() {
@@ -95,6 +116,7 @@ export default function AdminEvents() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-events"] });
       queryClient.invalidateQueries({ queryKey: ["events"] });
+      queryClient.invalidateQueries({ queryKey: ["events-page"] });
       toast.success("Event created successfully!");
       setIsAdding(false);
       setForm(emptyForm);
@@ -115,6 +137,7 @@ export default function AdminEvents() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-events"] });
       queryClient.invalidateQueries({ queryKey: ["events"] });
+      queryClient.invalidateQueries({ queryKey: ["events-page"] });
       toast.success("Event updated successfully!");
       setEditingId(null);
     },
@@ -131,6 +154,7 @@ export default function AdminEvents() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-events"] });
       queryClient.invalidateQueries({ queryKey: ["events"] });
+      queryClient.invalidateQueries({ queryKey: ["events-page"] });
       toast.success("Event deleted successfully!");
     },
     onError: (error) => {
@@ -176,6 +200,8 @@ export default function AdminEvents() {
       location: event.location || "",
       attendees: String(event.attendees),
       status: event.status,
+      category: event.category || "community",
+      gallery_slug: event.gallery_slug || "",
     });
   };
 
@@ -188,6 +214,8 @@ export default function AdminEvents() {
       location: form.location || null,
       attendees: parseInt(form.attendees) || 0,
       status: form.status,
+      category: form.category,
+      gallery_slug: form.gallery_slug || null,
     });
   };
 
@@ -203,6 +231,8 @@ export default function AdminEvents() {
       location: form.location || null,
       attendees: parseInt(form.attendees) || 0,
       status: form.status,
+      category: form.category,
+      gallery_slug: form.gallery_slug || null,
     });
   };
 
@@ -265,7 +295,7 @@ export default function AdminEvents() {
           <div>
             <h1 className="font-display text-3xl font-bold">Event Manager</h1>
             <p className="text-muted-foreground mt-2">
-              Add, edit, and manage events displayed on the website
+              Add, edit, and manage events displayed on the website ({events.length} events)
             </p>
           </div>
           <Button onClick={() => setIsAdding(true)} disabled={isAdding}>
@@ -290,7 +320,7 @@ export default function AdminEvents() {
                 <X className="w-4 h-4" />
               </Button>
             </div>
-            <div className="grid md:grid-cols-2 gap-4">
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
               <div className="space-y-2">
                 <Label>Title *</Label>
                 <Input
@@ -340,7 +370,33 @@ export default function AdminEvents() {
                   </SelectContent>
                 </Select>
               </div>
-              <div className="space-y-2 md:col-span-2">
+              <div className="space-y-2">
+                <Label>Category</Label>
+                <Select
+                  value={form.category}
+                  onValueChange={(v) => setForm((p) => ({ ...p, category: v as EventCategory }))}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="flagship">👑 Flagship</SelectItem>
+                    <SelectItem value="community">❤️ Community</SelectItem>
+                    <SelectItem value="vocational">💼 Vocational</SelectItem>
+                    <SelectItem value="club">🤝 Club Service</SelectItem>
+                    <SelectItem value="international">🌍 International</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label>Gallery Slug (optional)</Label>
+                <Input
+                  value={form.gallery_slug}
+                  onChange={(e) => setForm((p) => ({ ...p, gallery_slug: e.target.value }))}
+                  placeholder="e.g. ecoswap-phase-1"
+                />
+              </div>
+              <div className="space-y-2 md:col-span-2 lg:col-span-2">
                 <Label>Description</Label>
                 <Textarea
                   value={form.description}
@@ -388,208 +444,246 @@ export default function AdminEvents() {
           </div>
         ) : (
           <div className="space-y-4">
-            {events.map((event) => (
-              <div key={event.id} className="glass-card rounded-2xl p-6">
-                {editingId === event.id ? (
-                  /* Edit Mode */
-                  <div>
-                    <div className="grid md:grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label>Title *</Label>
-                        <Input
-                          value={form.title}
-                          onChange={(e) => setForm((p) => ({ ...p, title: e.target.value }))}
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label>Date *</Label>
-                        <Input
-                          value={form.date}
-                          onChange={(e) => setForm((p) => ({ ...p, date: e.target.value }))}
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label>Location</Label>
-                        <Input
-                          value={form.location}
-                          onChange={(e) => setForm((p) => ({ ...p, location: e.target.value }))}
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label>Attendees</Label>
-                        <Input
-                          type="number"
-                          value={form.attendees}
-                          onChange={(e) => setForm((p) => ({ ...p, attendees: e.target.value }))}
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label>Status</Label>
-                        <Select
-                          value={form.status}
-                          onValueChange={(v) =>
-                            setForm((p) => ({ ...p, status: v as EventStatus }))
-                          }
-                        >
-                          <SelectTrigger>
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="ongoing">🔥 Currently Active</SelectItem>
-                            <SelectItem value="upcoming">📅 Upcoming</SelectItem>
-                            <SelectItem value="past">✅ Completed</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div className="space-y-2 md:col-span-2">
-                        <Label>Description</Label>
-                        <Textarea
-                          value={form.description}
-                          onChange={(e) => setForm((p) => ({ ...p, description: e.target.value }))}
-                          rows={3}
-                        />
-                      </div>
-                    </div>
-                    <div className="flex justify-end gap-2 mt-4">
-                      <Button variant="outline" onClick={() => setEditingId(null)}>
-                        Cancel
-                      </Button>
-                      <Button
-                        onClick={() => handleSaveEvent(event.id)}
-                        disabled={updateEventMutation.isPending}
-                      >
-                        {updateEventMutation.isPending ? (
-                          <Loader2 className="w-4 h-4 animate-spin" />
-                        ) : (
-                          <>
-                            <Save className="w-4 h-4 mr-2" />
-                            Save
-                          </>
-                        )}
-                      </Button>
-                    </div>
-                  </div>
-                ) : (
-                  /* View Mode */
-                  <div className="flex flex-col md:flex-row gap-6">
-                    {/* Image */}
-                    <div className="w-full md:w-48 flex-shrink-0">
-                      {event.image_url ? (
-                        <img
-                          src={event.image_url}
-                          alt={event.title}
-                          className="w-full h-32 object-cover rounded-xl"
-                        />
-                      ) : (
-                        <div className="w-full h-32 bg-muted rounded-xl flex items-center justify-center">
-                          <span className="text-muted-foreground text-sm">No image</span>
-                        </div>
-                      )}
-                      <div className="mt-2 space-y-1">
-                        <label className="block">
+            {events.map((event) => {
+              const catConfig = categoryConfig[event.category || "community"];
+              const CatIcon = catConfig?.icon || Heart;
+              
+              return (
+                <div key={event.id} className="glass-card rounded-2xl p-6">
+                  {editingId === event.id ? (
+                    /* Edit Mode */
+                    <div>
+                      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <div className="space-y-2">
+                          <Label>Title *</Label>
                           <Input
-                            type="file"
-                            accept="image/*"
-                            className="hidden"
-                            onChange={(e) => {
-                              const file = e.target.files?.[0];
-                              if (file) handleFileUpload(event.id, file);
-                            }}
-                            disabled={uploadingId === event.id}
+                            value={form.title}
+                            onChange={(e) => setForm((p) => ({ ...p, title: e.target.value }))}
                           />
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            className="w-full"
-                            disabled={uploadingId === event.id}
-                            asChild
+                        </div>
+                        <div className="space-y-2">
+                          <Label>Date *</Label>
+                          <Input
+                            value={form.date}
+                            onChange={(e) => setForm((p) => ({ ...p, date: e.target.value }))}
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label>Location</Label>
+                          <Input
+                            value={form.location}
+                            onChange={(e) => setForm((p) => ({ ...p, location: e.target.value }))}
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label>Attendees</Label>
+                          <Input
+                            type="number"
+                            value={form.attendees}
+                            onChange={(e) => setForm((p) => ({ ...p, attendees: e.target.value }))}
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label>Status</Label>
+                          <Select
+                            value={form.status}
+                            onValueChange={(v) =>
+                              setForm((p) => ({ ...p, status: v as EventStatus }))
+                            }
                           >
-                            <span className="cursor-pointer">
-                              {uploadingId === event.id ? (
-                                <Loader2 className="w-4 h-4 animate-spin" />
-                              ) : (
-                                <>
-                                  <Upload className="w-4 h-4 mr-1" />
-                                  {event.image_url ? "Change" : "Upload"}
-                                </>
-                              )}
-                            </span>
-                          </Button>
-                        </label>
-                        {event.image_url && (
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="w-full text-destructive hover:text-destructive"
-                            onClick={() => handleRemoveImage(event.id)}
+                            <SelectTrigger>
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="ongoing">🔥 Currently Active</SelectItem>
+                              <SelectItem value="upcoming">📅 Upcoming</SelectItem>
+                              <SelectItem value="past">✅ Completed</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div className="space-y-2">
+                          <Label>Category</Label>
+                          <Select
+                            value={form.category}
+                            onValueChange={(v) =>
+                              setForm((p) => ({ ...p, category: v as EventCategory }))
+                            }
                           >
-                            <Trash2 className="w-4 h-4 mr-1" />
-                            Remove
-                          </Button>
-                        )}
+                            <SelectTrigger>
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="flagship">👑 Flagship</SelectItem>
+                              <SelectItem value="community">❤️ Community</SelectItem>
+                              <SelectItem value="vocational">💼 Vocational</SelectItem>
+                              <SelectItem value="club">🤝 Club Service</SelectItem>
+                              <SelectItem value="international">🌍 International</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div className="space-y-2">
+                          <Label>Gallery Slug</Label>
+                          <Input
+                            value={form.gallery_slug}
+                            onChange={(e) => setForm((p) => ({ ...p, gallery_slug: e.target.value }))}
+                          />
+                        </div>
+                        <div className="space-y-2 md:col-span-2">
+                          <Label>Description</Label>
+                          <Textarea
+                            value={form.description}
+                            onChange={(e) => setForm((p) => ({ ...p, description: e.target.value }))}
+                            rows={3}
+                          />
+                        </div>
+                      </div>
+                      <div className="flex justify-end gap-2 mt-4">
+                        <Button variant="outline" onClick={() => setEditingId(null)}>
+                          Cancel
+                        </Button>
+                        <Button
+                          onClick={() => handleSaveEvent(event.id)}
+                          disabled={updateEventMutation.isPending}
+                        >
+                          {updateEventMutation.isPending ? (
+                            <Loader2 className="w-4 h-4 animate-spin" />
+                          ) : (
+                            <>
+                              <Save className="w-4 h-4 mr-2" />
+                              Save
+                            </>
+                          )}
+                        </Button>
                       </div>
                     </div>
-
-                    {/* Details */}
-                    <div className="flex-1">
-                      <div className="flex items-start justify-between mb-2">
-                        <div>
-                          <h3 className="font-display text-xl font-bold">{event.title}</h3>
-                          <span
-                            className={`inline-block mt-1 px-3 py-1 rounded-full text-xs font-medium border ${statusColors[event.status]}`}
-                          >
-                            {event.status === "ongoing"
-                              ? "🔥 Currently Active"
-                              : event.status === "upcoming"
-                              ? "📅 Upcoming"
-                              : "✅ Completed"}
-                          </span>
-                        </div>
-                        <div className="flex gap-2">
-                          <Button
-                            variant="outline"
-                            size="icon"
-                            onClick={() => handleEditEvent(event)}
-                          >
-                            <Edit2 className="w-4 h-4" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="text-destructive hover:text-destructive"
-                            onClick={() => deleteEventMutation.mutate(event.id)}
-                            disabled={deleteEventMutation.isPending}
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </Button>
-                        </div>
-                      </div>
-                      {event.description && (
-                        <p className="text-muted-foreground text-sm mb-3 line-clamp-2">
-                          {event.description}
-                        </p>
-                      )}
-                      <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
-                        <div className="flex items-center gap-1">
-                          <Calendar className="w-4 h-4 text-primary" />
-                          {event.date}
-                        </div>
-                        {event.location && (
-                          <div className="flex items-center gap-1">
-                            <MapPin className="w-4 h-4 text-primary" />
-                            {event.location}
+                  ) : (
+                    /* View Mode */
+                    <div className="flex flex-col md:flex-row gap-6">
+                      {/* Image */}
+                      <div className="w-full md:w-48 flex-shrink-0">
+                        {event.image_url ? (
+                          <img
+                            src={event.image_url}
+                            alt={event.title}
+                            className="w-full h-32 object-cover rounded-xl"
+                          />
+                        ) : (
+                          <div className="w-full h-32 bg-muted rounded-xl flex items-center justify-center">
+                            <span className="text-muted-foreground text-sm">No image</span>
                           </div>
                         )}
-                        <div className="flex items-center gap-1">
-                          <Users className="w-4 h-4 text-primary" />
-                          {event.attendees}+ Participants
+                        <div className="mt-2 space-y-1">
+                          <label className="block">
+                            <Input
+                              type="file"
+                              accept="image/*"
+                              className="hidden"
+                              onChange={(e) => {
+                                const file = e.target.files?.[0];
+                                if (file) handleFileUpload(event.id, file);
+                              }}
+                              disabled={uploadingId === event.id}
+                            />
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="w-full"
+                              disabled={uploadingId === event.id}
+                              asChild
+                            >
+                              <span className="cursor-pointer">
+                                {uploadingId === event.id ? (
+                                  <Loader2 className="w-4 h-4 animate-spin" />
+                                ) : (
+                                  <>
+                                    <Upload className="w-4 h-4 mr-1" />
+                                    {event.image_url ? "Change" : "Upload"}
+                                  </>
+                                )}
+                              </span>
+                            </Button>
+                          </label>
+                          {event.image_url && (
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="w-full text-destructive hover:text-destructive"
+                              onClick={() => handleRemoveImage(event.id)}
+                            >
+                              <Trash2 className="w-4 h-4 mr-1" />
+                              Remove
+                            </Button>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Details */}
+                      <div className="flex-1">
+                        <div className="flex items-start justify-between mb-2">
+                          <div>
+                            <h3 className="font-display text-xl font-bold">{event.title}</h3>
+                            <div className="flex flex-wrap gap-2 mt-1">
+                              <span
+                                className={`inline-block px-3 py-1 rounded-full text-xs font-medium border ${statusColors[event.status]}`}
+                              >
+                                {event.status === "ongoing"
+                                  ? "🔥 Currently Active"
+                                  : event.status === "upcoming"
+                                  ? "📅 Upcoming"
+                                  : "✅ Completed"}
+                              </span>
+                              <span className={cn("inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium bg-muted", catConfig?.color)}>
+                                <CatIcon className="w-3 h-3" />
+                                {catConfig?.label || "Community"}
+                              </span>
+                            </div>
+                          </div>
+                          <div className="flex gap-2">
+                            <Button
+                              variant="outline"
+                              size="icon"
+                              onClick={() => handleEditEvent(event)}
+                            >
+                              <Edit2 className="w-4 h-4" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="text-destructive hover:text-destructive"
+                              onClick={() => deleteEventMutation.mutate(event.id)}
+                              disabled={deleteEventMutation.isPending}
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </Button>
+                          </div>
+                        </div>
+                        {event.description && (
+                          <p className="text-muted-foreground text-sm mb-3 line-clamp-2">
+                            {event.description}
+                          </p>
+                        )}
+                        <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
+                          <div className="flex items-center gap-1">
+                            <Calendar className="w-4 h-4 text-primary" />
+                            {event.date}
+                          </div>
+                          {event.location && (
+                            <div className="flex items-center gap-1">
+                              <MapPin className="w-4 h-4 text-primary" />
+                              {event.location}
+                            </div>
+                          )}
+                          <div className="flex items-center gap-1">
+                            <Users className="w-4 h-4 text-primary" />
+                            {event.attendees}+ Participants
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                )}
-              </div>
-            ))}
+                  )}
+                </div>
+              );
+            })}
           </div>
         )}
       </div>
