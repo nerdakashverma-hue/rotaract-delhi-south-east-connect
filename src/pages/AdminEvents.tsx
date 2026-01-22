@@ -283,6 +283,11 @@ export default function AdminEvents() {
               <ArrowLeft className="w-4 h-4" />
               Back to Team
             </Link>
+            <Link to="/admin/gallery">
+              <Button variant="secondary" size="sm">
+                Manage Gallery
+              </Button>
+            </Link>
           </div>
           <Button variant="outline" onClick={signOut}>
             <LogOut className="w-4 h-4 mr-2" />

@@ -201,11 +201,14 @@ export default function AdminTeam() {
               Upload photos and manage social links for each team member
             </p>
           </div>
-          <Link to="/admin/events">
-            <Button variant="secondary">
-              Manage Events
-            </Button>
-          </Link>
+          <div className="flex items-center gap-2">
+            <Link to="/admin/events">
+              <Button variant="secondary">Manage Events</Button>
+            </Link>
+            <Link to="/admin/gallery">
+              <Button variant="secondary">Manage Gallery</Button>
+            </Link>
+          </div>
         </div>
 
         {/* Team Grid */}
