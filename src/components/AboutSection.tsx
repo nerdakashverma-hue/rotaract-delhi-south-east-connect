@@ -13,9 +13,7 @@ export function AboutSection() {
           </span>
           <h2 className="font-display text-3xl md:text-5xl font-bold mb-4">Hola Amigos! <span className="gradient-text">Amigos!</span> 👋
           </h2>
-          <p className="text-muted-foreground max-w-2xl mx-auto">
-            Don't worry, we're not Spanish… but we are proudly part of the global Rotary and Rotaract family! 🌍✨
-          </p>
+          <p className="text-muted-foreground max-w-2xl mx-auto">Don't worry, we're not Spanish… but we are proudly part of the global Rotary and Rotaract family! </p>
         </div>
 
         {/* Main About Content */}
