@@ -11,7 +11,7 @@ export function AboutSection() {
           <span className="inline-block px-4 py-2 rounded-full bg-primary/10 text-primary font-medium text-sm mb-4 hover:bg-primary/15 transition-colors">
             About Us
           </span>
-          <h2 className="font-display text-3xl md:text-5xl font-bold mb-4">Hola Amigos! <span className="gradient-text">Amigos!</span> 👋
+          <h2 className="font-display text-3xl md:text-5xl font-bold mb-4">Hola Amigos! Amigos! <span className="gradient-text">Amigos!</span> 👋
           </h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">Don't worry, we're not Spanish… but we are proudly part of the global Rotary and Rotaract family! </p>
         </div>
