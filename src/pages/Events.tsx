@@ -1,12 +1,13 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Link } from "react-router-dom";
-import { Calendar, MapPin, Users, ArrowRight, Camera, Crown, Globe, Heart, Briefcase, Handshake, Loader2 } from "lucide-react";
+import { Crown, Globe, Heart, Briefcase, Handshake, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
+import { EventCard } from "@/components/events/EventCard";
+import { FlagshipAccordion } from "@/components/events/FlagshipAccordion";
 
 type EventStatus = "ongoing" | "upcoming" | "past";
 type EventCategory = "flagship" | "international" | "community" | "vocational" | "club";
@@ -22,65 +23,15 @@ interface Event {
   category: string | null;
   image_url: string | null;
   gallery_slug: string | null;
+  parent_event_id: string | null;
 }
 
-const categoryConfig: Record<EventCategory, { label: string; icon: typeof Crown; color: string; bgColor: string; textColor: string }> = {
-  flagship: {
-    label: "Flagship",
-    icon: Crown,
-    color: "bg-primary",
-    bgColor: "bg-primary/10",
-    textColor: "text-primary",
-  },
-  international: {
-    label: "International",
-    icon: Globe,
-    color: "bg-blue-500",
-    bgColor: "bg-blue-500/10",
-    textColor: "text-blue-600",
-  },
-  community: {
-    label: "Community",
-    icon: Heart,
-    color: "bg-rose-500",
-    bgColor: "bg-rose-500/10",
-    textColor: "text-rose-600",
-  },
-  vocational: {
-    label: "Vocational",
-    icon: Briefcase,
-    color: "bg-amber-500",
-    bgColor: "bg-amber-500/10",
-    textColor: "text-amber-600",
-  },
-  club: {
-    label: "Club Service",
-    icon: Handshake,
-    color: "bg-emerald-500",
-    bgColor: "bg-emerald-500/10",
-    textColor: "text-emerald-600",
-  },
-};
-
-const statusConfig = {
-  ongoing: {
-    label: "Currently Active",
-    color: "bg-green-500",
-    bgColor: "bg-green-500/10",
-    textColor: "text-green-600",
-  },
-  upcoming: {
-    label: "Coming Soon",
-    color: "bg-secondary",
-    bgColor: "bg-secondary/10",
-    textColor: "text-secondary",
-  },
-  past: {
-    label: "Completed",
-    color: "bg-muted-foreground",
-    bgColor: "bg-muted",
-    textColor: "text-muted-foreground",
-  },
+const categoryConfig: Record<EventCategory, { label: string; icon: typeof Crown; color: string }> = {
+  flagship: { label: "Flagship", icon: Crown, color: "bg-primary" },
+  international: { label: "International", icon: Globe, color: "bg-blue-500" },
+  community: { label: "Community", icon: Heart, color: "bg-rose-500" },
+  vocational: { label: "Vocational", icon: Briefcase, color: "bg-amber-500" },
+  club: { label: "Club Service", icon: Handshake, color: "bg-emerald-500" },
 };
 
 const Events = () => {
@@ -100,11 +51,60 @@ const Events = () => {
     },
   });
 
-  const filteredEvents = events.filter((e) => {
-    const categoryMatch = activeCategory === "all" || e.category === activeCategory;
-    const statusMatch = activeStatus === "all" || e.status === activeStatus;
-    return categoryMatch && statusMatch;
-  });
+  // Group flagship events by parent
+  const { flagshipGroups, regularEvents } = useMemo(() => {
+    const filteredByStatus = activeStatus === "all" 
+      ? events 
+      : events.filter(e => e.status === activeStatus);
+
+    // Get flagship parent events (no parent_event_id and category is flagship)
+    const flagshipParents = filteredByStatus.filter(
+      e => e.category === "flagship" && !e.parent_event_id
+    );
+
+    // Get flagship children
+    const flagshipChildren = filteredByStatus.filter(
+      e => e.category === "flagship" && e.parent_event_id
+    );
+
+    // Build groups
+    const groups = flagshipParents.map(parent => ({
+      parent,
+      children: flagshipChildren.filter(child => child.parent_event_id === parent.id)
+    })).filter(group => group.children.length > 0);
+
+    // Get events that have been grouped as children
+    const groupedChildIds = new Set(groups.flatMap(g => g.children.map(c => c.id)));
+
+    // Regular events: non-flagship OR standalone flagship (no children and not a child)
+    const regular = filteredByStatus.filter(e => {
+      if (activeCategory !== "all" && activeCategory !== "flagship" && e.category !== activeCategory) {
+        return false;
+      }
+      if (activeCategory === "flagship") {
+        // For flagship filter, show ungrouped flagship events
+        if (e.category !== "flagship") return false;
+        const isParentWithChildren = groups.some(g => g.parent.id === e.id);
+        const isChild = groupedChildIds.has(e.id);
+        return !isParentWithChildren && !isChild;
+      }
+      if (activeCategory === "all") {
+        // Skip flagships that are grouped
+        if (e.category === "flagship") {
+          const isParentWithChildren = groups.some(g => g.parent.id === e.id);
+          const isChild = groupedChildIds.has(e.id);
+          if (isParentWithChildren || isChild) return false;
+        }
+        return true;
+      }
+      return e.category === activeCategory;
+    });
+
+    return {
+      flagshipGroups: (activeCategory === "all" || activeCategory === "flagship") ? groups : [],
+      regularEvents: regular
+    };
+  }, [events, activeCategory, activeStatus]);
 
   return (
     <main className="min-h-screen">
@@ -168,9 +168,9 @@ const Events = () => {
               <div className="flex flex-wrap items-center justify-center gap-3">
                 {[
                   { key: "all", label: "All Events" },
-                  { key: "ongoing", label: "🔥 Currently Active" },
-                  { key: "upcoming", label: "📅 Upcoming" },
-                  { key: "past", label: "✅ Completed" },
+                  { key: "ongoing", label: "Currently Active" },
+                  { key: "upcoming", label: "Upcoming" },
+                  { key: "past", label: "Completed" },
                 ].map((filter) => (
                   <button
                     key={filter.key}
@@ -188,111 +188,37 @@ const Events = () => {
               </div>
             </div>
 
-            {/* Events Grid */}
+            {/* Events Content */}
             {isLoading ? (
               <div className="flex justify-center py-12">
                 <Loader2 className="w-8 h-8 animate-spin text-primary" />
               </div>
             ) : (
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {filteredEvents.map((event, index) => {
-                  const catConfig = categoryConfig[(event.category as EventCategory) || "community"];
-                  const statConfig = statusConfig[(event.status as EventStatus) || "past"];
-                  const CatIcon = catConfig?.icon || Heart;
-                  
-                  return (
-                    <div
-                      key={event.id}
-                      className="glass-card rounded-3xl overflow-hidden hover-lift group"
-                      style={{ animationDelay: `${index * 100}ms` }}
-                    >
-                      {/* Image */}
-                      <div className="relative h-48 overflow-hidden">
-                        {event.image_url ? (
-                          <img
-                            src={event.image_url}
-                            alt={event.title}
-                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                          />
-                        ) : (
-                          <div className="w-full h-full bg-muted flex items-center justify-center">
-                            <span className="text-muted-foreground">No image</span>
-                          </div>
-                        )}
-                        <div className="absolute top-4 left-4 flex gap-2">
-                          <span className={cn(
-                            "px-3 py-1 rounded-full text-xs font-medium flex items-center gap-1",
-                            statConfig?.bgColor || "bg-muted",
-                            statConfig?.textColor || "text-muted-foreground"
-                          )}>
-                            <span className={cn("w-2 h-2 rounded-full", statConfig?.color || "bg-muted-foreground")} />
-                            {statConfig?.label || "Completed"}
-                          </span>
-                        </div>
-                        <div className="absolute top-4 right-4">
-                          <span className={cn(
-                            "px-3 py-1 rounded-full text-xs font-medium flex items-center gap-1",
-                            catConfig?.bgColor || "bg-muted",
-                            catConfig?.textColor || "text-muted-foreground"
-                          )}>
-                            <CatIcon className="w-3 h-3" />
-                            {catConfig?.label || "Community"}
-                          </span>
-                        </div>
-                      </div>
+              <div className="space-y-12">
+                {/* Flagship Accordion Groups */}
+                {flagshipGroups.length > 0 && (
+                  <FlagshipAccordion groups={flagshipGroups} />
+                )}
 
-                      {/* Content */}
-                      <div className="p-6">
-                        <h3 className="font-display text-xl font-bold mb-2 group-hover:text-primary transition-colors">
-                          {event.title}
-                        </h3>
-                        <p className="text-muted-foreground text-sm mb-4 line-clamp-2">
-                          {event.description}
-                        </p>
-
-                        {/* Meta Info */}
-                        <div className="space-y-2 mb-4">
-                          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                            <Calendar className="w-4 h-4 text-primary" />
-                            {event.date}
-                          </div>
-                          {event.location && (
-                            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                              <MapPin className="w-4 h-4 text-primary" />
-                              {event.location}
-                            </div>
-                          )}
-                          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                            <Users className="w-4 h-4 text-primary" />
-                            {event.attendees}+ Participants
-                          </div>
-                        </div>
-
-                        {/* Action Buttons */}
-                        <div className="flex gap-2">
-                          <Button 
-                            variant={event.status === "ongoing" ? "hero" : "outline"} 
-                            className="flex-1"
-                          >
-                            {event.status === "ongoing" ? "Join Now" : event.status === "upcoming" ? "Register" : "Details"}
-                            <ArrowRight className="w-4 h-4" />
-                          </Button>
-                          {event.gallery_slug && (
-                            <Button variant="outline" size="icon" asChild>
-                              <Link to={`/gallery?event=${event.gallery_slug}`}>
-                                <Camera className="w-4 h-4" />
-                              </Link>
-                            </Button>
-                          )}
-                        </div>
-                      </div>
+                {/* Regular Events Grid */}
+                {regularEvents.length > 0 && (
+                  <div>
+                    {flagshipGroups.length > 0 && (
+                      <h3 className="font-display text-xl font-bold mb-6">
+                        {activeCategory === "flagship" ? "Standalone Events" : "Other Events"}
+                      </h3>
+                    )}
+                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                      {regularEvents.map((event, index) => (
+                        <EventCard key={event.id} event={event} index={index} />
+                      ))}
                     </div>
-                  );
-                })}
+                  </div>
+                )}
               </div>
             )}
 
-            {!isLoading && filteredEvents.length === 0 && (
+            {!isLoading && flagshipGroups.length === 0 && regularEvents.length === 0 && (
               <div className="text-center py-16">
                 <p className="text-muted-foreground text-lg">No events found matching your filters.</p>
                 <Button 

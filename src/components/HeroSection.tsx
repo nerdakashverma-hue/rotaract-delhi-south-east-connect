@@ -35,7 +35,7 @@ export function HeroSection() {
           </h1>
 
           {/* Subtitle */}
-          <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-8 animate-fade-in-up animation-delay-200">
+          <p className="text-lg md:text-xl text-foreground/90 max-w-2xl mx-auto mb-8 animate-fade-in-up animation-delay-200">
             Where passion meets purpose, and youth meets action! We're a family of changemakers creating lasting impact through service, leadership, and friendship.
           </p>
 
@@ -72,7 +72,7 @@ export function HeroSection() {
                 <div className="text-2xl md:text-3xl font-bold gradient-text mb-1 group-hover:scale-105 transition-transform">
                   {stat.number}
                 </div>
-                <div className="text-sm text-muted-foreground">{stat.label}</div>
+                <div className="text-sm text-foreground/80">{stat.label}</div>
               </div>
             ))}
           </div>
