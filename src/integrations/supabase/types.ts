@@ -59,6 +59,7 @@ export type Database = {
           id: string
           image_url: string | null
           location: string | null
+          parent_event_id: string | null
           status: string
           title: string
           updated_at: string
@@ -74,6 +75,7 @@ export type Database = {
           id?: string
           image_url?: string | null
           location?: string | null
+          parent_event_id?: string | null
           status?: string
           title: string
           updated_at?: string
@@ -89,11 +91,20 @@ export type Database = {
           id?: string
           image_url?: string | null
           location?: string | null
+          parent_event_id?: string | null
           status?: string
           title?: string
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "events_parent_event_id_fkey"
+            columns: ["parent_event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       gallery_photos: {
         Row: {

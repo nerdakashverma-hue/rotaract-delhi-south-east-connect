@@ -80,9 +80,9 @@ export function EventsSection() {
         <div className="flex flex-wrap items-center justify-center gap-3 mb-12">
           {[
             { key: "all", label: "All Events" },
-            { key: "ongoing", label: "🔥 Currently Active" },
-            { key: "upcoming", label: "📅 Upcoming" },
-            { key: "past", label: "✅ Completed" },
+            { key: "ongoing", label: "Currently Active" },
+            { key: "upcoming", label: "Upcoming" },
+            { key: "past", label: "Completed" },
           ].map((filter) => (
             <button
               key={filter.key}

@@ -369,9 +369,9 @@ export default function AdminEvents() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="ongoing">🔥 Currently Active</SelectItem>
-                    <SelectItem value="upcoming">📅 Upcoming</SelectItem>
-                    <SelectItem value="past">✅ Completed</SelectItem>
+                    <SelectItem value="ongoing">Currently Active</SelectItem>
+                    <SelectItem value="upcoming">Upcoming</SelectItem>
+                    <SelectItem value="past">Completed</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -385,11 +385,11 @@ export default function AdminEvents() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="flagship">👑 Flagship</SelectItem>
-                    <SelectItem value="community">❤️ Community</SelectItem>
-                    <SelectItem value="vocational">💼 Vocational</SelectItem>
-                    <SelectItem value="club">🤝 Club Service</SelectItem>
-                    <SelectItem value="international">🌍 International</SelectItem>
+                    <SelectItem value="flagship">Flagship</SelectItem>
+                    <SelectItem value="community">Community</SelectItem>
+                    <SelectItem value="vocational">Vocational</SelectItem>
+                    <SelectItem value="club">Club Service</SelectItem>
+                    <SelectItem value="international">International</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -500,9 +500,9 @@ export default function AdminEvents() {
                               <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
-                              <SelectItem value="ongoing">🔥 Currently Active</SelectItem>
-                              <SelectItem value="upcoming">📅 Upcoming</SelectItem>
-                              <SelectItem value="past">✅ Completed</SelectItem>
+                              <SelectItem value="ongoing">Currently Active</SelectItem>
+                              <SelectItem value="upcoming">Upcoming</SelectItem>
+                              <SelectItem value="past">Completed</SelectItem>
                             </SelectContent>
                           </Select>
                         </div>
@@ -518,11 +518,11 @@ export default function AdminEvents() {
                               <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
-                              <SelectItem value="flagship">👑 Flagship</SelectItem>
-                              <SelectItem value="community">❤️ Community</SelectItem>
-                              <SelectItem value="vocational">💼 Vocational</SelectItem>
-                              <SelectItem value="club">🤝 Club Service</SelectItem>
-                              <SelectItem value="international">🌍 International</SelectItem>
+                              <SelectItem value="flagship">Flagship</SelectItem>
+                              <SelectItem value="community">Community</SelectItem>
+                              <SelectItem value="vocational">Vocational</SelectItem>
+                              <SelectItem value="club">Club Service</SelectItem>
+                              <SelectItem value="international">International</SelectItem>
                             </SelectContent>
                           </Select>
                         </div>
@@ -632,10 +632,10 @@ export default function AdminEvents() {
                                 className={`inline-block px-3 py-1 rounded-full text-xs font-medium border ${statusColors[event.status]}`}
                               >
                                 {event.status === "ongoing"
-                                  ? "🔥 Currently Active"
+                                  ? "Currently Active"
                                   : event.status === "upcoming"
-                                  ? "📅 Upcoming"
-                                  : "✅ Completed"}
+                                  ? "Upcoming"
+                                  : "Completed"}
                               </span>
                               <span className={cn("inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium bg-muted", catConfig?.color)}>
                                 <CatIcon className="w-3 h-3" />
