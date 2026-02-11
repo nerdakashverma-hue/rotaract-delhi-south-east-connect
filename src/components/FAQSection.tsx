@@ -44,7 +44,7 @@ const faqs = [
   },
   {
     question: "Why should I choose Rotaract Club of Delhi South East?",
-    answer: "Because we aren't just a club. We're a family. We crib together, cry together, pull off miracles together—and in the end, we always laugh and celebrate together. 💛"
+    answer: "Because we aren't just a club. We're a family. We crib together, cry together, pull off miracles together—and in the end, we always laugh and celebrate together."
   },
 ];
 

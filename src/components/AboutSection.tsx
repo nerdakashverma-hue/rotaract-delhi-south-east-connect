@@ -11,9 +11,9 @@ export function AboutSection() {
           <span className="inline-block px-4 py-2 rounded-full bg-primary/10 text-primary font-medium text-sm mb-4 hover:bg-primary/15 transition-colors">
             About Us
           </span>
-          <h2 className="font-display text-3xl md:text-5xl font-bold mb-4">Hola Amigos! Amigos! <span className="gradient-text">Amigos!</span> 👋
+          <h2 className="font-display text-3xl md:text-5xl font-bold mb-4">Hola Amigos! Amigos! <span className="gradient-text">Amigos!</span>
           </h2>
-          <p className="text-muted-foreground max-w-2xl mx-auto">Don't worry, we're not Spanish… but we are proudly part of the global Rotary and Rotaract family! </p>
+          <p className="text-muted-foreground max-w-2xl mx-auto">{"Don't worry, we're not Spanish... but we are proudly part of the global Rotary and Rotaract family!"}</p>
         </div>
 
         {/* Main About Content */}
@@ -22,11 +22,11 @@ export function AboutSection() {
             <h3 className="font-display text-2xl md:text-3xl font-bold">
               What is <span className="gradient-text">Rotaract?</span>
             </h3>
-            <p className="text-muted-foreground leading-relaxed">Welcome to the world of Rotaract – where passion meets purpose, and youth meets action! Backed by Rotary International, Rotaract brings together young minds who are crazy enough to believe they can change the world – and then actually do it. </p>
+            <p className="text-muted-foreground leading-relaxed">{"Welcome to the world of Rotaract - where passion meets purpose, and youth meets action! Backed by Rotary International, Rotaract brings together young minds who are crazy enough to believe they can change the world - and then actually do it."}</p>
             <p className="text-muted-foreground leading-relaxed">
-              Whether it's community service, leadership adventures, professional growth, or just vibing with like-minded changemakers – Rotaract is where it all happens. From local projects to global impact, we don't just dream big, we do big.
+              {"Whether it's community service, leadership adventures, professional growth, or just vibing with like-minded changemakers - Rotaract is where it all happens. From local projects to global impact, we don't just dream big, we do big."}
             </p>
-            <p className="text-lg font-medium gradient-text">Let's serve, grow, and glow – together! </p>
+            <p className="text-lg font-medium gradient-text">{"Let's serve, grow, and glow - together!"}</p>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
@@ -85,3 +85,4 @@ export function AboutSection() {
       </div>
     </section>;
 }
+

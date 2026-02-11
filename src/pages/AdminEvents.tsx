@@ -51,6 +51,7 @@ interface Event {
   image_url: string | null;
   gallery_slug: string | null;
   display_order: number;
+  parent_event_id: string | null;
 }
 
 interface EventForm {
@@ -62,6 +63,7 @@ interface EventForm {
   status: EventStatus;
   category: EventCategory;
   gallery_slug: string;
+  parent_event_id: string;
 }
 
 const emptyForm: EventForm = {
@@ -73,6 +75,7 @@ const emptyForm: EventForm = {
   status: "upcoming",
   category: "community",
   gallery_slug: "",
+  parent_event_id: "",
 };
 
 const categoryConfig: Record<EventCategory, { label: string; icon: typeof Crown; color: string }> = {
@@ -202,6 +205,7 @@ export default function AdminEvents() {
       status: event.status,
       category: event.category || "community",
       gallery_slug: event.gallery_slug || "",
+      parent_event_id: event.parent_event_id || "",
     });
   };
 
@@ -216,6 +220,7 @@ export default function AdminEvents() {
       status: form.status,
       category: form.category,
       gallery_slug: form.gallery_slug || null,
+      parent_event_id: form.parent_event_id || null,
     });
   };
 
@@ -233,6 +238,7 @@ export default function AdminEvents() {
       status: form.status,
       category: form.category,
       gallery_slug: form.gallery_slug || null,
+      parent_event_id: form.parent_event_id || null,
     });
   };
 
@@ -401,6 +407,29 @@ export default function AdminEvents() {
                   placeholder="e.g. ecoswap-phase-1"
                 />
               </div>
+              {form.category === "flagship" && (
+                <div className="space-y-2">
+                  <Label>Parent Flagship Event (optional)</Label>
+                  <Select
+                    value={form.parent_event_id}
+                    onValueChange={(v) => setForm((p) => ({ ...p, parent_event_id: v === "none" ? "" : v }))}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="None (standalone)" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="none">None (standalone parent)</SelectItem>
+                      {events
+                        .filter((e) => e.category === "flagship" && !e.parent_event_id)
+                        .map((e) => (
+                          <SelectItem key={e.id} value={e.id}>
+                            {e.title}
+                          </SelectItem>
+                        ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
               <div className="space-y-2 md:col-span-2 lg:col-span-2">
                 <Label>Description</Label>
                 <Textarea
@@ -533,6 +562,29 @@ export default function AdminEvents() {
                             onChange={(e) => setForm((p) => ({ ...p, gallery_slug: e.target.value }))}
                           />
                         </div>
+                        {form.category === "flagship" && (
+                          <div className="space-y-2">
+                            <Label>Parent Flagship Event</Label>
+                            <Select
+                              value={form.parent_event_id}
+                              onValueChange={(v) => setForm((p) => ({ ...p, parent_event_id: v === "none" ? "" : v }))}
+                            >
+                              <SelectTrigger>
+                                <SelectValue placeholder="None (standalone)" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="none">None (standalone parent)</SelectItem>
+                                {events
+                                  .filter((e) => e.category === "flagship" && !e.parent_event_id && e.id !== editingId)
+                                  .map((e) => (
+                                    <SelectItem key={e.id} value={e.id}>
+                                      {e.title}
+                                    </SelectItem>
+                                  ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        )}
                         <div className="space-y-2 md:col-span-2">
                           <Label>Description</Label>
                           <Textarea
@@ -641,6 +693,11 @@ export default function AdminEvents() {
                                 <CatIcon className="w-3 h-3" />
                                 {catConfig?.label || "Community"}
                               </span>
+                              {event.parent_event_id && (
+                                <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary">
+                                  Sub-event of: {events.find(e => e.id === event.parent_event_id)?.title || "Unknown"}
+                                </span>
+                              )}
                             </div>
                           </div>
                           <div className="flex gap-2">
