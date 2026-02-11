@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
@@ -28,11 +28,11 @@ import {
   Users,
   Edit2,
   Crown,
-  Globe,
   Heart,
   Briefcase,
   Handshake,
 } from "lucide-react";
+import { RotaryWheelIcon } from "@/components/icons/RotaryWheelIcon";
 import { Link, Navigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 
@@ -78,9 +78,9 @@ const emptyForm: EventForm = {
   parent_event_id: "",
 };
 
-const categoryConfig: Record<EventCategory, { label: string; icon: typeof Crown; color: string }> = {
+const categoryConfig: Record<EventCategory, { label: string; icon: React.ComponentType<any>; color: string }> = {
   flagship: { label: "Flagship", icon: Crown, color: "text-primary" },
-  international: { label: "International", icon: Globe, color: "text-blue-600" },
+  international: { label: "International", icon: RotaryWheelIcon, color: "text-blue-600" },
   community: { label: "Community", icon: Heart, color: "text-rose-600" },
   vocational: { label: "Vocational", icon: Briefcase, color: "text-amber-600" },
   club: { label: "Club Service", icon: Handshake, color: "text-emerald-600" },
