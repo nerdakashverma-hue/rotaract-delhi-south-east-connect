@@ -1,4 +1,5 @@
-import { ArrowRight, Heart, Users, Globe, Sparkles } from "lucide-react";
+import { ArrowRight, Heart, Users, Sparkles } from "lucide-react";
+import { RotaryWheelIcon } from "./icons/RotaryWheelIcon";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { StarryBackground } from "./StarryBackground";
@@ -24,7 +25,7 @@ export function HeroSection() {
         <div className="max-w-4xl mx-auto text-center">
           {/* Badge */}
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 mb-8 animate-fade-in-up backdrop-blur-sm hover:bg-primary/15 transition-colors cursor-default">
-            <Globe className="w-4 h-4 text-primary animate-bounce-subtle" />
+            <RotaryWheelIcon className="w-4 h-4 text-primary animate-bounce-subtle" />
             <span className="text-sm font-medium text-primary">Rotaract District 3011</span>
           </div>
 

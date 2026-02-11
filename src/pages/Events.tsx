@@ -1,7 +1,8 @@
-import { useState, useMemo } from "react";
+import React, { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Crown, Globe, Heart, Briefcase, Handshake, Loader2 } from "lucide-react";
+import { Crown, Heart, Briefcase, Handshake, Loader2 } from "lucide-react";
+import { RotaryWheelIcon } from "@/components/icons/RotaryWheelIcon";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Navbar } from "@/components/Navbar";
@@ -26,9 +27,9 @@ interface Event {
   parent_event_id: string | null;
 }
 
-const categoryConfig: Record<EventCategory, { label: string; icon: typeof Crown; color: string }> = {
+const categoryConfig: Record<EventCategory, { label: string; icon: React.ComponentType<any>; color: string }> = {
   flagship: { label: "Flagship", icon: Crown, color: "bg-primary" },
-  international: { label: "International", icon: Globe, color: "bg-blue-500" },
+  international: { label: "International", icon: RotaryWheelIcon, color: "bg-blue-500" },
   community: { label: "Community", icon: Heart, color: "bg-rose-500" },
   vocational: { label: "Vocational", icon: Briefcase, color: "bg-amber-500" },
   club: { label: "Club Service", icon: Handshake, color: "bg-emerald-500" },

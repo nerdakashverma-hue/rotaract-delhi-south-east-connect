@@ -36,7 +36,7 @@ export function MembershipSection() {
 
       setIsSubmitted(true);
       toast({
-        title: "Application Submitted! 🎉",
+        title: "Application Submitted!",
         description: "Welcome to the RaC DSE family! We'll reach out soon.",
       });
     } catch (error) {
@@ -60,7 +60,7 @@ export function MembershipSection() {
               <CheckCircle className="w-12 h-12 text-primary-foreground" />
             </div>
             <h2 className="font-display text-3xl md:text-4xl font-bold mb-4">
-              Welcome to the <span className="gradient-text">Family!</span> 🎉
+              Welcome to the <span className="gradient-text">Family!</span>
             </h2>
             <p className="text-muted-foreground text-lg mb-8">
               Your application has been received. Our team will review it and reach out to you within 48 hours. Get ready for an amazing journey!
