@@ -12,10 +12,10 @@ export function WhyChooseSection() {
           <span className="inline-block px-4 py-2 rounded-full bg-primary/10 text-primary font-medium text-sm mb-4 hover:bg-primary/15 transition-colors">
             Why Us?
           </span>
-          <h2 className="font-display text-3xl md:text-5xl font-bold mb-4">Why Choose RAC DSE? RAC DSE? <span className="gradient-text">RAC DSE?</span> 💫
+          <h2 className="font-display text-3xl md:text-5xl font-bold mb-4">Why Choose RAC DSE? RAC DSE? <span className="gradient-text">RAC DSE?</span>
           </h2>
           <p className="text-xl text-muted-foreground">
-            Because we're not just members… <span className="font-semibold text-foreground">We're family.</span>
+            Because we're not just members... <span className="font-semibold text-foreground">We're family.</span>
           </p>
         </div>
 
@@ -82,9 +82,9 @@ export function WhyChooseSection() {
         {/* Bottom Quote */}
         <div className="text-center mt-16 animate-slide-up animation-delay-600">
           <p className="text-xl md:text-2xl font-display text-foreground">
-            So, why RAC DSE? Because here, you're not just joining a club…
+            So, why RAC DSE? Because here, you're not just joining a club...
           </p>
-          <p className="text-2xl md:text-3xl font-display font-bold gradient-text mt-2 animate-shimmer">You're becoming part of something real. Something unforgettable. Something beautifully chaotic. </p>
+          <p className="text-2xl md:text-3xl font-display font-bold gradient-text mt-2 animate-shimmer">You're becoming part of something real. Something unforgettable. Something beautifully chaotic.</p>
         </div>
       </div>
     </section>;
